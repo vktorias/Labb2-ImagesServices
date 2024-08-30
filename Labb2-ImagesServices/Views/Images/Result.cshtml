@@ -1,0 +1,89 @@
+﻿@using Microsoft.Azure.CognitiveServices.Vision.ComputerVision.Models
+@{
+    ViewData["Title"] = "Analysis Result";
+    var analysisResult = ViewBag.AnalysisResult as ImageAnalysis;
+    var thumbnail = ViewBag.Thumbnail as string;
+}
+
+<style>
+    .custom-badge {
+        color: #000000; 
+    }
+</style>
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Analysis Result</h2>
+
+    @if (analysisResult != null)
+    {
+        <!-- Tags Section -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0"><i class="fas fa-tags"></i> Tags</h3>
+            </div>
+            <div class="card-body">
+                <div class="d-flex flex-wrap">
+                    @foreach (var tag in analysisResult.Tags)
+                    {
+                        <span class="badge custom-badge m-1 p-2">
+                            @tag.Name (@tag.Confidence.ToString("P"))
+                        </span>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Objects Section -->
+        <div class="card mb-4">
+            <div class="card-header bg-success text-white">
+                <h3 class="mb-0"><i class="fas fa-object-group"></i> Detected Objects</h3>
+            </div>
+            <div class="card-body">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Object</th>
+                            <th>Confidence</th>
+                            <th>Position</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var obj in analysisResult.Objects)
+                        {
+                            <tr>
+                                <td>@obj.ObjectProperty</td>
+                                <td>@obj.Confidence.ToString("P")</td>
+                                <td>@obj.Rectangle.X, @obj.Rectangle.Y</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Thumbnail Section -->
+        <div class="card mb-4">
+            <div class="card-header bg-warning text-white">
+                <h3 class="mb-0"><i class="fas fa-image"></i> Thumbnail</h3>
+            </div>
+            <div class="card-body text-center">
+                @if (!string.IsNullOrEmpty(thumbnail))
+                {
+                    <img src="data:image/png;base64,@thumbnail" class="img-thumbnail" />
+                }
+                else
+                {
+                    <p>No thumbnail available.</p>
+                }
+            </div>
+        </div>
+
+        <!-- Back Button -->
+        <div class="text-center">
+            <a href="@Url.Action("Index", "Images")" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back to Upload</a>
+        </div>
+    }
+</div>
+
+<!-- Include Font Awesome for Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
